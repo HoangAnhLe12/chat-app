@@ -1,8 +1,8 @@
 Chương trình về đề tài chat app:
-Các hoạt động:
-B1: Tìm hiểu thông tin và quyết định đề tài, công nghệ sử dụng
-B2: Phân tích thiết kế
-B3: Chuẩn bị môi trường, thiết lập dự án
+#Các hoạt động:
+#B1: Tìm hiểu thông tin và quyết định đề tài, công nghệ sử dụng
+#B2: Phân tích thiết kế
+#B3: Chuẩn bị môi trường, thiết lập dự án
 
 ## Getting Started
 
