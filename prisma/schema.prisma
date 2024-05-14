@@ -22,7 +22,7 @@ model Profile {
   email String @db.Text
 
   servers Server[]
-  memvers Member[]
+  members Member[]
   channels Channel[]
 
 
