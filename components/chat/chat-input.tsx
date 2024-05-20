@@ -6,7 +6,7 @@ import axios from "axios";
 import qs from "query-string";
 
 import { useForm } from "react-hook-form";
-import { Plus, Smile } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import {
     Form,
@@ -15,6 +15,9 @@ import {
     FormItem
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
+import { useModal } from "@/hooks/use-model-store";
+import { EmojiPicker } from "@/components/emoji-picker";
+import { useRouter } from "next/navigation";
 
 interface ChatInputProps {
     apiUrl: string;
@@ -34,6 +37,9 @@ export const ChatInput = ({
     type,
 }:ChatInputProps) => {
 
+    const router = useRouter();
+    const { onOpen } = useModal();
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -51,6 +57,8 @@ export const ChatInput = ({
             });
 
             await axios.post(url, values);
+            form.reset();
+            router.refresh();
         } catch (error) {
             console.log(error);
         }
@@ -68,7 +76,7 @@ export const ChatInput = ({
                             <div className="relative p-4 pb-6">
                                 <button
                                 type="button"
-                                onClick= {() => {}}
+                                onClick= {() => onOpen("messageFile",{apiUrl, query})}
                                 className="absolute top-7 left-8 h-[24px] w-[24px]
                                 bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600
                                 dark:hover:bg-zinc-300 transition rounded-full p-1 flex
@@ -85,7 +93,8 @@ export const ChatInput = ({
                                 {...field}
                                 />
                                 <div className="absolute top-7 right-8">
-                                    <Smile/>
+                                    <EmojiPicker
+                                    onChange={(emoji:string) => field.onChange(`${field.value} ${emoji}`) }/>
                                 </div>
                             </div>
                         </FormControl>
