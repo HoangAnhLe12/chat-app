@@ -82,16 +82,23 @@ export const ChatItem = ({
 
     const isLoading = form.formState.isSubmitting;
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const onSubmit = async (values:z.infer<typeof formSchema>) => {
         try {
             const url = qs.stringifyUrl({
                 url: `${socketUrl}/${id}`,
                 query: socketQuery,
             });
+    
+            await axios.patch(url, values);
+            form.reset();
+            setIsEditing(false);
+    
         } catch (error) {
-            console.log(error);
+            console.log('Error in PATCH request:', error);
         }
     }
+    
+
 
     useEffect(() => {
         form.reset({
@@ -162,12 +169,12 @@ export const ChatItem = ({
                     </a>
                   </div>
                    )}
-                   {!fileUrl && isEditing && (
+                   {!fileUrl && !isEditing && (
                     <p className={cn(
                         "text-sm text-zinc-600 dark:text-zinc-300",
                         deleted && "italic text-zinc-500 dark:text-zinc-400 text-xs mt-1"
                     )}>
-                        {content}
+                         {content}
                         {isUpdated && !deleted && (
                             <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400">
                                 (edited)
@@ -175,6 +182,7 @@ export const ChatItem = ({
                         )}
                     </p>
                    )}
+                  
                    {!fileUrl && isEditing && (
                     <Form {...form}>
                         <form 
