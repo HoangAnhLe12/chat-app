@@ -55,7 +55,7 @@ const ChannelIdPage = async ({
             socketUrl="/api/socket/messages"
             socketQuery={{
                 channelId: channel.id,
-                serverId: channel.id,
+                serverId: channel.serverId,
             }}
             paramKey="channelId"
             paramValue={channel.id}
