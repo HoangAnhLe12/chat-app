@@ -1,5 +1,6 @@
 import { currentUser, auth } from "@clerk/nextjs/server";
 import { db} from "@/lib/db";
+import { v4 as uuidv4} from "uuid";
 
 
 export const initialProfile = async () => {
@@ -24,7 +25,8 @@ export const initialProfile = async () => {
             userId: user.id,
             name: `${user.firstName} ${user.lastName}`,
             imageUrl: user.imageUrl,
-            email: user.emailAddresses[0].emailAddress
+            email: user.emailAddresses[0].emailAddress,
+            addCode: uuidv4()
         }
     });
 

@@ -4,23 +4,26 @@ import { Fragment, useRef, ElementRef } from "react";
 import { format } from "date-fns"
 import { Loader2, ServerCrash } from "lucide-react";
 import { useChatQuery } from "@/hooks/use-chat-query";
-import { Member, Message, Profile } from "@prisma/client";
+import { DirectMessageFriend, Friend, Profile } from "@prisma/client";
 import { ChatWelcome } from "./chat-welcome";
-import { ChatItem } from "./chat-item";
 import { useChatSocket } from "@/hooks/use-chat-socket";
 import { useChatScroll } from "@/hooks/use-chat-scroll";
+import { ChatItemFriend } from "./chat-items-friends";
 
 const DATE_FORMAT = "d MMM yyyy, HH:mm";
 
-type MessageWithMemberWithProfile = Message & {
-    member: Member & {
-        profile: Profile
-    }
-}
+type MessageWithProfile = DirectMessageFriend & {
+
+    profile: Profile & {
+        profileId: Friend;
+        friendId: Friend;
+      };
+  };
+
 
 interface ChatMessagesProps {
     name: string;
-    member: Member;
+    profile: Profile;
     chatId: string;
     apiUrl: string;
     socketUrl: string;
@@ -30,9 +33,9 @@ interface ChatMessagesProps {
     type: "channel" | "conversation";
 }
 
-export const ChatMessages = ({
+export const ChatFriend = ({
     name, 
-    member,
+    profile,
     chatId,
     apiUrl,
     socketQuery,
@@ -119,12 +122,12 @@ export const ChatMessages = ({
             <div className="flex flex-col-reverse mt-auto">
                 {data?.pages?.map((group, i) => (
                     <Fragment key={i}>
-                        {group.items.map((message: MessageWithMemberWithProfile) => (
-                            <ChatItem
+                        {group.items.map((message: MessageWithProfile) => (
+                            <ChatItemFriend                         
                             key={message.id}
+                            profile={profile}
                             id={message.id}
-                            currentMember={member}
-                            member={message.member}
+                            currentProfile={message.profile}
                             content={message.content}
                             fileUrl={message.fileUrl}
                             deleted={message.deleted}
