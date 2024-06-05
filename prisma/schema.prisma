@@ -15,20 +15,44 @@ datasource db {
 }
 
 model Profile {
-  id String @id @default(uuid())
-  userId String @unique
-  name String 
-  imageUrl String @db.Text
-  email String @db.Text
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  name      String 
+  imageUrl  String   @db.Text
+  email     String   @db.Text
+  addCode   String   @unique 
 
-  servers Server[]
-  members Member[]
-  channels Channel[]
+  servers   Server[]
+  members   Member[]
+  channels  Channel[]
 
+  friends   Friend[] @relation("ProfileFriends")
+  friendOf  Friend[] @relation("ProfileFriendOf")
+
+  directMessages DirectMessageFriend[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Friend {
+  id String @id @default(uuid())
+
+  profileId String
+  profile   Profile @relation("ProfileFriends", fields: [profileId], references: [id], onDelete: Cascade)
+  friendId  String
+  friend    Profile @relation("ProfileFriendOf", fields: [friendId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  directMessages DirectMessageFriend[]
+
+  @@index([profileId])
+  @@index([friendId])
+  @@unique([profileId, friendId])
+}
+
 
 model Server{
   id String @id @default(uuid())
@@ -162,3 +186,25 @@ model DirectMessage {
   @@index([conversationId])
 
 }
+
+model DirectMessageFriend {
+  id String @id @default(uuid())
+  content String @db.Text
+  fileUrl String? @db.Text
+
+  profileId String
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  friendId String
+  friend Friend @relation(fields: [friendId], references: [id], onDelete: Cascade)
+
+  deleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([friendId])
+
+}
+

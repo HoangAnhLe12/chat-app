@@ -38,7 +38,7 @@ export const ServerHeader = ({
         
         <DropdownMenu>
             <DropdownMenuTrigger
-            className="focus:outline-none"
+            className="focus:outline-none transition ease-in-out delay-150"
             asChild
             >
                 <button
@@ -48,7 +48,7 @@ export const ServerHeader = ({
                 >
                     {server.name}
                     <ChevronDown
-                    className="h-5 w-5 ml-auto"
+                    className="h-5 w-5 ml-auto max-[768px]:hidden "
                     />
                 </button>
             </DropdownMenuTrigger>

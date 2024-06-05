@@ -5,10 +5,10 @@ import axios from "axios";
 import qs from "query-string";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Member, MemberRole, Profile } from "@prisma/client";
+import { Friend, Profile } from "@prisma/client";
 import { UserAvatar } from "@/components/user-avatar";
 import { ActionTooltip } from "@/components/action-tooltip";
-import { Edit, FileIcon, ShieldAlert, ShieldCheck, Trash, VideoIcon } from "lucide-react";
+import { Edit, FileIcon,  Trash, VideoIcon } from "lucide-react";
 import Image from "next/image"
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -25,37 +25,32 @@ import { useRouter, useParams } from "next/navigation";
 
 interface ChatItemProps {
     id: string;
+    profile: Profile;
+    currentProfile: Profile & {
+        profileId: Friend;
+        friendId: Friend;
+      };
     content: string;
-    member: Member & {
-        profile: Profile;
-    };
     timestamp: string;
     fileUrl: string | null;
     deleted: boolean;
-    currentMember: Member;
     isUpdated: boolean;
     socketUrl: string;
     socketQuery: Record<string, string>;
-}
-
-const roleIconMap = {
-    "GUEST": null,
-    "MODERATOR": <ShieldCheck className="h-4 w-4 ml-2 text-indigo-500"/>,
-    "ADMIN": <ShieldAlert className="h-4 w-4 ml-2 text-rose-500"/>
 }
 
 const formSchema = z.object({
     content: z.string().min(1),
 });
 
-export const ChatItem = ({
+export const ChatItemFriend = ({
     id,
+    currentProfile,
+    profile,
     content,
-    member,
     timestamp,
     fileUrl,
     deleted,
-    currentMember,
     isUpdated,
     socketUrl,
     socketQuery,
@@ -67,13 +62,6 @@ export const ChatItem = ({
     const params = useParams();
     const router = useRouter();
 
-    const onMemberClick = () => {
-        if(member.id === currentMember.id){
-            return;
-        }
-
-        router.push(`/servers/${params?.serverId}/conversations/${member.id}`);
-    }
 
     useEffect(() => {
         const handleKeyDown = (event: any) => {
@@ -118,38 +106,32 @@ export const ChatItem = ({
     }, [content, form]);
 
     const fileType = fileUrl?.split(".").pop();
-    const isAdmin = currentMember.role === MemberRole.ADMIN;
-    const isModerator = currentMember.role === MemberRole.MODERATOR;
-    const isOwner = currentMember.id === member.id;
-    const canDeleteMessage = !deleted && (isAdmin || isModerator || isOwner);
+    //const isCurrentProfile = friend.profile.id || friend.friend.id;
+    
+    const isOwner = profile.id === currentProfile.id ;
+    const canDeleteMessage = !deleted && (isOwner);
     const canEditMessage = !deleted && isOwner && !fileUrl;
     const isPDF = fileType === "pdf" && fileUrl;
     const isVIDEO = fileType === "video/mp4" && fileUrl;
     const isImage = !isPDF && fileUrl && !isVIDEO;
+    
 
     return (
         <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
             <div className="group flex gap-x-2 items-start w-full">
                 <div 
-                onClick={onMemberClick}
                 className="cursor-pointer hover:drop-shadow-md transition">
                     <UserAvatar 
-                    src={member.profile.imageUrl}
+                    src={currentProfile.imageUrl}
                     />
                 </div>
                 <div className="flex flex-col w-full">
                     <div className="flex items-center gap-x-2">
                         <div className="flex items-center">
                             <p 
-                            onClick={onMemberClick}
                             className="font-semibold text-sm hover:underline cursor-pointer">
-                                {member.profile.name}
+                                {currentProfile.name}
                             </p>
-                            <ActionTooltip 
-                            label = {member.role}
-                            >
-                                {roleIconMap[member.role]}
-                            </ActionTooltip>
                         </div>
                         <span className="text-xs text-zinc-500 dark:text-zinc-400">
                             {timestamp}
@@ -187,21 +169,17 @@ export const ChatItem = ({
                    )}
                    {isVIDEO &&(
                     <div className="relative flex items-center p-2 mt-2 rounded-md bg-background/10">
-                    <video className="h-10 w-10">
-                    <source src={fileUrl} type="video/mp4" />
-                    Your browser does not support the video tag.
-                    </video>
-                    <div className="ml-2">
-            <VideoIcon className="h-6 w-6 fill-indigo-200 stroke-indigo-400" />
-        </div>
-                    {/* <a
+                    <VideoIcon
+                    className="h-10 w-10 fill-indigo-200 stroke-indigo-400"
+                    />
+                    <a
                     href={fileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ml-2 text-sm text-indigo-500 dark:text-indigo-400 hover:underline"
                     >
                         VIDEO File
-                    </a> */}
+                    </a>
                   </div>
                    )}
                    {!fileUrl && !isEditing && (
