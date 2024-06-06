@@ -1,12 +1,13 @@
 ## Chương trình về đề tài chat app:
-  <h3> Các hoạt động: </h3>
+  <h3> Các cài đặt ( đã cài đặt node js) </h3>
   <ul>
-  <li>  1. Tìm hiểu thông tin và quyết định đề tài, công nghệ sử dụng </li>
-  <li> 2.Phân tích thiết kế </li>
-  <li> 3. Chuẩn bị môi trường, thiết lập dự án, chia nhiệm vụ </li>
-  <li> 4. Công việc tiếp theo : đang cập nhật </li>
+  <li>  1. Clone source code </li>
+  <li> 2. Tạo file `.env` để chứa thông tin các dịch vụ về chương trình </li>
+  <li> 3. Cài đặt các thư viện cần thiết bằng `npm i`. Nếu bạn dùng yarn thì hãy xóa file package-lock.json và dùng `yarn add` để cài đặt thư viện ( đã cài đặt yarn )</li>
+  <li> 4. Chạy lệnh `npx prisma generate` và ` npx prisma db push` dể tạo database </li>
   </ul>
-  
+## File env chứa các thông tin sau:
+<img src="/public/env.jpg">  
 
 ## Getting Started
 
