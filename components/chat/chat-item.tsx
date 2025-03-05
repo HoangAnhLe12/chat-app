@@ -192,7 +192,9 @@ export const ChatItem = ({
                     Your browser does not support the video tag.
                     </video>
                     <div className="ml-2">
-            <VideoIcon className="h-6 w-6 fill-indigo-200 stroke-indigo-400" />
+                    <FileIcon
+                    className="h-10 w-10 fill-indigo-200 stroke-indigo-400"
+                    />
         </div>
                     {/* <a
                     href={fileUrl}
